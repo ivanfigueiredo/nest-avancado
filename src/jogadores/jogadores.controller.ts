@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common'
 import { CriarJogadorDto } from './dtos/criar-jogador.dto'
 import { Jogador } from './interfaces/jogador.interface'
 import { JogadoresService } from './jogadores.service'
