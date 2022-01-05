@@ -55,6 +55,31 @@ export class DesafiosService {
       return await desafioCriado.save()
     }
 
-    
+    async consultarTodosDesafios(): Promise<Array<Desafio>> {
+        return await this.desafioModel.find()
+        .populate("solicitante")
+        .populate("jogadores")
+        .populate("partida")
+        .exec()
+    }
 
+    async consultarDesafiosDeUmJogador(_id: any): Promise<Array<Desafio>> {
+
+       const jogadores = await this.jogadoresService.consultarTodosJogadores()
+
+        const jogadorFilter = jogadores.filter( jogador => jogador._id == _id )
+
+        if (jogadorFilter.length == 0) {
+            throw new BadRequestException(`O id ${_id} não é um jogador!`)
+        }
+
+        return await this.desafioModel.find()
+        .where('jogadores')
+        .in(_id)
+        .populate("solicitante")
+        .populate("jogadores")
+        .populate("partida")
+        .exec()
+
+    }
 }
