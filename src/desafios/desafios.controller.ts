@@ -4,6 +4,7 @@ import { Body, Controller, Get, Logger, Param, Post, Put, Query, UsePipes, Valid
 import { Desafio } from './interfaces/desafio.interface';
 import { AtualizarDesafioDto } from './dtos/atualizar-desafios.dto';
 import { DesafioStatusValidacaoPipe } from './pipe/desafio-status-validation.pipe';
+import { AtribuirDesafioPartidaDto } from './dtos/atribuir-desafio-partida.dto';
 
 @Controller('api/v1/desafios')
 export class DesafiosController {
@@ -36,6 +37,14 @@ export class DesafiosController {
         @Param('desafio') _id: string): Promise<void> {
             await this.desafioService.atualizarDesafio(_id, atualizarDesafioDto)
 
-        }    
+    }
+    
+    @Post('/:desafio/partida/')
+    async atribuirDesafioPartida(
+       @Body(ValidationPipe) atribuirDesafioPartidaDto: AtribuirDesafioPartidaDto,
+       @Param('desafio') _id: string): Promise<void> {
+        return await this.desafioService.atribuirDesafioPartida(_id, atribuirDesafioPartidaDto)           
+    }
+
 
 }

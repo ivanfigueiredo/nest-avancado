@@ -1,4 +1,4 @@
-import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { CategoriasService } from './../categorias/categorias.service';
 import { CriarDesafioDto } from './dtos/criar-desafio.dto';
 import { Desafio } from './interfaces/desafio.interface';
@@ -8,6 +8,7 @@ import { Model } from 'mongoose';
 import { JogadoresService } from 'src/jogadores/jogadores.service';
 import { DesafioStatus } from './interfaces/desafio-status.enum';
 import { AtualizarDesafioDto } from './dtos/atualizar-desafios.dto';
+import { AtribuirDesafioPartidaDto } from './dtos/atribuir-desafio-partida.dto';
 
 
 @Injectable()
@@ -100,5 +101,42 @@ export class DesafiosService {
 
         await this.desafioModel.findOneAndUpdate({_id},{$set: desafioEncontrado}).exec()
         
+    }
+
+    async atribuirDesafioPartida(_id: string, atribuirDesafioPartidaDto: AtribuirDesafioPartidaDto ): Promise<void> {
+
+        const desafioEncontrado = await this.desafioModel.findById(_id).exec()
+        
+        if (!desafioEncontrado) {
+            throw new BadRequestException(`Desafio ${_id} não cadastrado!`)
+        }
+
+       const jogadorFilter = desafioEncontrado.jogadores.filter( jogador => jogador._id == atribuirDesafioPartidaDto.def )
+
+        this.logger.log(`desafioEncontrado: ${desafioEncontrado}`)
+        this.logger.log(`jogadorFilter: ${jogadorFilter}`)
+
+       if (jogadorFilter.length == 0) {
+           throw new BadRequestException(`O jogador vencedor não faz parte do desafio!`)
+       }
+
+       const partidaCriada = new this.partidaModel(atribuirDesafioPartidaDto)
+
+       partidaCriada.categoria = desafioEncontrado.categoria
+
+       partidaCriada.jogadores = desafioEncontrado.jogadores
+
+       const resultado = await partidaCriada.save()
+       
+        desafioEncontrado.status = DesafioStatus.REALIZADO
+
+        desafioEncontrado.partida = resultado._id
+
+        try {
+        await this.desafioModel.findOneAndUpdate({_id},{$set: desafioEncontrado}).exec() 
+        } catch (error) {
+           await this.partidaModel.deleteOne({_id: resultado._id}).exec();
+           throw new InternalServerErrorException()
+        }
     }
 }
