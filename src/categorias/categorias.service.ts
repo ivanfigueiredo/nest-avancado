@@ -2,7 +2,7 @@ import { AtualizarCategoriaDto } from './dtos/atualizar-categoria.dto';
 import { CriarCategoriaDto } from './dtos/criar-categoria.dto';
 import { Categoria } from './interfaces/categoria.interface';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { JogadoresService } from 'src/jogadores/jogadores.service';
 
@@ -45,6 +45,21 @@ export class CategoriasService {
       await this.categoriaModel.findOneAndUpdate({ categoria }, 
         { $set: atualizarCategoriaDto}).exec()
     }
+
+    async consultarCategoriaDoJogador(idJogador: any): Promise<Categoria> {
+
+     const jogadores = await this.jogadoresService.consultarTodosJogadores()
+
+     const jogadorFilter = jogadores.filter( jogador => jogador._id == idJogador )
+
+     if (jogadorFilter.length == 0) {
+         throw new BadRequestException(`O id ${idJogador} não é um jogador!`)
+     }
+
+      return await this.categoriaModel.findOne().where('jogadores').in(idJogador).exec() 
+
+  }
+
 
     async atribuirCategoriaJogador(params: string[]): Promise<void> {
       const categoria = params['categoria']
