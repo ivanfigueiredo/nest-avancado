@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto'
 import { Jogador } from './interfaces/jogador.interface';
 import { JogadoresService } from './jogadores.service'
@@ -8,6 +8,7 @@ export class JogadoresController {
   constructor(private readonly jogadoresService: JogadoresService) {}    
     
   @Post()
+  @UsePipes(ValidationPipe)
   async criarAtualizarJogador(
     @Body() criarJogador: CriarJogadorDto) {
       await this.jogadoresService.criarAtualizarJogador(criarJogador)
@@ -29,3 +30,7 @@ export class JogadoresController {
     await this.jogadoresService.deletarJogadorPeloEmail(email)
   }
 }
+function UserPipes() {
+  throw new Error('Function not implemented.');
+}
+
