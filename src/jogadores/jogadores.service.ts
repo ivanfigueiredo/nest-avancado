@@ -1,5 +1,5 @@
 import { CriarJogadorDto } from './dtos/criar-jogador.dto'
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { Jogador } from './interfaces/jogador.interface'
 import {  InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
