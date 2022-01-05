@@ -8,7 +8,7 @@ export interface Categoria extends Document {
   jogadores: Array<Jogador>
 }
 
-interface Evento {
+export interface Evento {
     nome: string
     operacao: string
     valor: number
