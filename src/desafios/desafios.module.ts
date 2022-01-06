@@ -5,6 +5,7 @@ import { JogadoresModule } from 'src/jogadores/jogadores.module';
 import { DesafiosController } from './desafios.controller';
 import { DesafiosService } from './desafios.service';
 import { DesafioSchema } from './interfaces/desafios.schema';
+import { PartidaSchema } from './interfaces/partida.schema';
 
 @Module({
   imports: [MongooseModule.forFeature([
